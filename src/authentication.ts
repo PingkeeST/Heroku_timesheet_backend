@@ -54,7 +54,6 @@ class FacebookStrategy extends OAuthStrategy {
     // for Facebook API requests as the Bearer token
     const accessToken = authResult.access_token;
     token = authResult.access_token
-    console.log('running of auth: ', accessToken);
     const { data } = await axios.get('https://graph.facebook.com/me', {
       headers: {
         authorization: `Bearer ${accessToken}`
@@ -64,16 +63,15 @@ class FacebookStrategy extends OAuthStrategy {
         fields: 'id,name,email,gender,location,birthday,friends'
       }
     });
-    console.log('end of auth');
     return data;
   }
   async getEntityData(profile: OAuthProfile, existing: any, params: Params) {
     // `profile` is the data returned by getProfile
     
     const baseData = await super.getEntityData(profile, existing, params);
-
     return {
       ...baseData,
+      username: baseData.facebookId,
       email: profile.email,
       gender: profile.gender,
       profileName: profile.name,
@@ -88,9 +86,9 @@ export default function(app: Application) {
   const authentication = new AuthenticationService(app);
   authentication.register('jwt', new JWTStrategy());
   authentication.register('local', new LocalStrategy());
-  // authentication.register('auth0', new Auth0Strategy());
-  // authentication.register('github', new GitHubStrategy());
-  // authentication.register('google', new GoogleStrategy());
+  authentication.register('auth0', new Auth0Strategy());
+  authentication.register('github', new GitHubStrategy());
+  authentication.register('google', new GoogleStrategy());
   authentication.register('facebook', new FacebookStrategy());
 
   app.use('/authentication', authentication);
