@@ -9,7 +9,10 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    text: { type: String, required: true }
+    chatId: { type:String, required: true },
+    senderId: { type:String, required: true },
+    recieverId: { type:String, required: true },
+    message: { type: String, required: true }
   }, {
     timestamps: true
   });
